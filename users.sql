@@ -1,40 +1,23 @@
 -- 1. Supprimer l'utilisateur c##witness et ses objets, s'il existe
 BEGIN
-    FOR rec IN (SELECT username FROM dba_users WHERE username = 'C##WITNESS') LOOP
-        EXECUTE IMMEDIATE 'DROP USER c##witness CASCADE';
+    FOR rec IN (SELECT username FROM dba_users WHERE username IN ('C##WITNESS', 'C##IMPROVEMENT', 'C##NEW_SYS')) LOOP
+        EXECUTE IMMEDIATE 'DROP USER ' || rec.username || ' CASCADE';
     END LOOP;
 END;
 /
 
--- 2. Supprimer l'utilisateur c##improvement et ses objets, s'il existe
-BEGIN
-    FOR rec IN (SELECT username FROM dba_users WHERE username = 'C##IMPROVEMENT') LOOP
-        EXECUTE IMMEDIATE 'DROP USER c##improvement CASCADE';
-    END LOOP;
-END;
-/
-
--- 3. Supprimer l'utilisateur c##new_sys et ses objets, s'il existe
-BEGIN
-    FOR rec IN (SELECT username FROM dba_users WHERE username = 'C##NEW_SYS') LOOP
-        EXECUTE IMMEDIATE 'DROP USER c##new_sys CASCADE';
-    END LOOP;
-END;
-/
-
-
--- 4. Création de l'utilisateur SYS avec des privilèges administratifs
+-- 2. Création de l'utilisateur SYS avec des privilèges administratifs
 CREATE USER c##new_sys IDENTIFIED BY password_sys;
 GRANT DBA TO c##new_sys;
 
 -- Se connecter sous l'utilisateur SYS pour exécuter les scripts SQL
 ALTER SESSION SET CURRENT_SCHEMA = c##new_sys;
 
--- 5. Création / importation des bases de données
+-- 3. Création / importation des bases de données
 @/Users/aurelienruppe/Documents/Cours/AdminBDD/DB/bdd_origin.sql
 @/Users/aurelienruppe/Documents/Cours/AdminBDD/DB/bdd_opti.sql
 
--- 6. Création de l'utilisateur Témoin avec un accès lecture seule sur bdd_origin
+-- 5. Création de l'utilisateur Témoin avec un accès lecture seule sur bdd_origin
 CREATE USER c##witness IDENTIFIED BY password_witness;
 GRANT CONNECT TO c##witness;
 
@@ -46,7 +29,7 @@ BEGIN
 END;
 /
 
--- 7. Création de l'utilisateur Amélioration avec tous les droits sur bdd_opti
+-- 6. Création de l'utilisateur Amélioration avec tous les droits sur bdd_opti
 CREATE USER c##improvement IDENTIFIED BY password_improvement;
 GRANT CONNECT, RESOURCE TO c##improvement;
 
