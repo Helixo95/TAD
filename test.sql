@@ -24,16 +24,32 @@ DESCRIBE ORDINATEURS;
 
 SELECT name FROM v$database;
 
+SELECT table_name
+FROM all_tables
+WHERE owner = 'C##NEW_SYS';  -- Remplacez par le nom du schéma cible
+
 
 BEGIN
-    -- Boucle sur toutes les tables de bdd_opti et suppression
     FOR t IN (SELECT table_name
               FROM all_tables
-              WHERE owner = 'C##NEW_SYS'  -- C##NEW_SYS est l'utilisateur propriétaire de bdd_opti
-                AND table_name NOT LIKE 'BIN$%' -- Optionnel : Exclut les tables système
+              WHERE owner = 'C##NEW_SYS'  -- Remplacez par le nom du schéma cible
+                AND table_name NOT LIKE 'BIN$%' -- Exclut les tables système
     ) LOOP
-        -- Exécuter la suppression de chaque table dans bdd_opti
-        EXECUTE IMMEDIATE 'DROP TABLE C##NEW_SYS.' || t.table_name || ' CASCADE';
+        BEGIN
+            EXECUTE IMMEDIATE 'DROP TABLE C##NEW_SYS."' || t.table_name || '" CASCADE CONSTRAINTS';
+        EXCEPTION
+            WHEN OTHERS THEN
+                DBMS_OUTPUT.put_line('Erreur lors de la suppression de la table ' || t.table_name || ': ' || SQLERRM);
+        END;
     END LOOP;
 END;
 /
+
+
+CONNECT c##new_sys/password_sys@localhost:1521/bdd_origin;
+
+SELECT name FROM v$database;
+
+SELECT INSTANCE_NAME, STATUS FROM v$instance;
+
+SELECT username FROM all_users ORDER BY username;
