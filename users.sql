@@ -14,12 +14,16 @@ GRANT DBA TO c##new_sys;
 ALTER SESSION SET CURRENT_SCHEMA = c##new_sys;
 
 -- 3. Création / importation des bases de données
+SELECT name FROM v$database;
+
 @/Users/aurelienruppe/Documents/Cours/AdminBDD/DB/bdd_origin.sql
-@/Users/aurelienruppe/Documents/Cours/AdminBDD/DB/bdd_opti.sql
+-- @/Users/aurelienruppe/Documents/Cours/AdminBDD/DB/bdd_opti.sql
 
 -- 4. Création de l'utilisateur Témoin avec un accès lecture seule sur bdd_origin
 CREATE USER c##witness IDENTIFIED BY password_witness;
 GRANT CONNECT TO c##witness;
+
+SELECT name FROM v$database;
 
 -- Accorder des droits SELECT sur toutes les tables de bdd_origin
 BEGIN
