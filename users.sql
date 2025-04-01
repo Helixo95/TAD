@@ -1,4 +1,4 @@
--- 1. Supprimer l'utilisateur c##witness et ses objets, s'il existe
+-- 1. Supprimer les utilisateurs c##witness, c##improvement et c##new_sys ainsi que leurs objets, s'ils existent
 BEGIN
     FOR rec IN (SELECT username FROM dba_users WHERE username IN ('C##WITNESS', 'C##IMPROVEMENT', 'C##NEW_SYS')) LOOP
         EXECUTE IMMEDIATE 'DROP USER ' || rec.username || ' CASCADE';
@@ -17,7 +17,7 @@ ALTER SESSION SET CURRENT_SCHEMA = c##new_sys;
 @/Users/aurelienruppe/Documents/Cours/AdminBDD/DB/bdd_origin.sql
 @/Users/aurelienruppe/Documents/Cours/AdminBDD/DB/bdd_opti.sql
 
--- 5. Création de l'utilisateur Témoin avec un accès lecture seule sur bdd_origin
+-- 4. Création de l'utilisateur Témoin avec un accès lecture seule sur bdd_origin
 CREATE USER c##witness IDENTIFIED BY password_witness;
 GRANT CONNECT TO c##witness;
 
@@ -29,7 +29,7 @@ BEGIN
 END;
 /
 
--- 6. Création de l'utilisateur Amélioration avec tous les droits sur bdd_opti
+-- 5. Création de l'utilisateur Amélioration avec tous les droits sur bdd_opti
 CREATE USER c##improvement IDENTIFIED BY password_improvement;
 GRANT CONNECT, RESOURCE TO c##improvement;
 
