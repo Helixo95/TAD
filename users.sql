@@ -36,17 +36,17 @@ END;
 
 
 -- 4. Création de l'utilisateur SYS avec des privilèges administratifs
-CREATE USER c##new_sys IDENTIFIED BY password_sys;
+CREATE USER c##new_sys IDENTIFIED BY "passwordsys";
 GRANT DBA TO c##new_sys;
 
 -- Se connecter sous l'utilisateur SYS pour exécuter les scripts SQL
 ALTER SESSION SET CURRENT_SCHEMA = c##new_sys;
 
--- Création des administrateurs des 2 BDD
-CREATE USER c##admin_sys_origin IDENTIFIED BY password_sys_origin;
+-- Création des administrateurs
+CREATE USER c##admin_sys_origin IDENTIFIED BY "password_sys_origin";
 GRANT DBA TO c##admin_sys_origin;
 
-CREATE USER c##admin_sys_opti IDENTIFIED BY password_sys_opti;
+CREATE USER c##admin_sys_opti IDENTIFIED BY "password_sys_opti";
 GRANT DBA TO c##admin_sys_opti;
 
 
@@ -60,7 +60,7 @@ ALTER SESSION SET CURRENT_SCHEMA = c##admin_sys_origin;
 @/Users/aurelienruppe/Documents/Cours/AdminBDD/DB/bdd_origin.sql
 
 -- Création de l'utilisateur témoin avec un accès lecture seule sur bdd_origin
-CREATE USER c##witness IDENTIFIED BY password_witness;
+CREATE USER c##witness IDENTIFIED BY "password_witness";
 GRANT CONNECT TO c##witness;
 
 CREATE ROLE c##origin_readOnly;
@@ -78,23 +78,23 @@ END;
 GRANT c##origin_readOnly TO c##witness;
 
 
--- -- b. BDD optimisée
--- -- Importation de la BDD optimisée
--- ALTER SESSION SET CURRENT_SCHEMA = c##admin_sys_opti;
--- @/Users/aurelienruppe/Documents/Cours/AdminBDD/DB/bdd_opti.sql
+-- b. BDD optimisée
+-- Importation de la BDD optimisée
+ALTER SESSION SET CURRENT_SCHEMA = c##admin_sys_opti;
+@/Users/aurelienruppe/Documents/Cours/AdminBDD/DB/bdd_opti.sql
 
--- -- Création de l'utilisateur Amélioration avec tous les droits sur bdd_opti
--- CREATE USER c##improvement IDENTIFIED BY password_improvement;
--- GRANT CONNECT, RESOURCE TO c##improvement;
+-- Création de l'utilisateur Amélioration avec tous les droits sur bdd_opti
+CREATE USER c##improvement IDENTIFIED BY password_improvement;
+GRANT CONNECT, RESOURCE TO c##improvement;
 
--- CREATE ROLE c##opti_readWrite;
+CREATE ROLE c##opti_readWrite;
 
--- -- Accorder tous les privilèges sur les tables de bdd_opti
--- BEGIN
---     FOR t IN (SELECT table_name FROM all_tables WHERE owner = 'C##ADMIN_SYS_OPTI') LOOP
---         EXECUTE IMMEDIATE 'GRANT ALL PRIVILEGES ON C##ADMIN_SYS_OPTI.' || t.table_name || ' TO c##opti_readWrite';
---     END LOOP;
--- END;
--- /
+-- Accorder tous les privilèges sur les tables de bdd_opti
+BEGIN
+    FOR t IN (SELECT table_name FROM all_tables WHERE owner = 'C##ADMIN_SYS_OPTI') LOOP
+        EXECUTE IMMEDIATE 'GRANT ALL PRIVILEGES ON C##ADMIN_SYS_OPTI.' || t.table_name || ' TO c##opti_readWrite';
+    END LOOP;
+END;
+/
 
--- GRANT c##opti_readWrite TO c##improvement;
+GRANT c##opti_readWrite TO c##improvement;
