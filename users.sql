@@ -6,41 +6,82 @@ BEGIN
 END;
 /
 
--- 2. Création de l'utilisateur SYS avec des privilèges administratifs
+
+
+-- 2. Supprimer les rôles ROLE1, ROLE2 et ROLE3 ainsi que leurs objets, s'ils existent
+-- Suppression des rôles
+BEGIN
+   FOR r IN (SELECT role 
+             FROM dba_roles 
+             WHERE role IN ('C##ORIGIN_READONLY', 'C##OPTI_READWRITE'))
+   LOOP
+      EXECUTE IMMEDIATE 'DROP ROLE ' || r.role;
+   END LOOP;
+END;
+/
+
+
+
+-- 3. Création de l'utilisateur SYS avec des privilèges administratifs
 CREATE USER c##new_sys IDENTIFIED BY password_sys;
 GRANT DBA TO c##new_sys;
 
 -- Se connecter sous l'utilisateur SYS pour exécuter les scripts SQL
 ALTER SESSION SET CURRENT_SCHEMA = c##new_sys;
 
--- 3. Création / importation des bases de données
+-- Création des administrateurs des 2 BDD
+CREATE USER c##admin_sys_origin IDENTIFIED BY password_sys_origin;
+GRANT DBA TO c##admin_sys_origin;
+
+CREATE USER c##admin_sys_opti IDENTIFIED BY password_sys_opti;
+GRANT DBA TO c##admin_sys_opti;
+
+
+
+-- 4. Création / importation des BDD
 SELECT name FROM v$database;
 
+-- a. BDD origine
+-- Importation de la BDD d'origine
+ALTER SESSION SET CURRENT_SCHEMA = c##admin_sys_origin;
 @/Users/aurelienruppe/Documents/Cours/AdminBDD/DB/bdd_origin.sql
--- @/Users/aurelienruppe/Documents/Cours/AdminBDD/DB/bdd_opti.sql
 
--- 4. Création de l'utilisateur Témoin avec un accès lecture seule sur bdd_origin
+-- Création de l'utilisateur témoin avec un accès lecture seule sur bdd_origin
 CREATE USER c##witness IDENTIFIED BY password_witness;
 GRANT CONNECT TO c##witness;
+
+CREATE ROLE c##origin_readOnly;
 
 SELECT name FROM v$database;
 
 -- Accorder des droits SELECT sur toutes les tables de bdd_origin
 BEGIN
-    FOR t IN (SELECT table_name FROM all_tables WHERE owner = 'C##NEW_SYS') LOOP
-        EXECUTE IMMEDIATE 'GRANT SELECT ON C##NEW_SYS.' || t.table_name || ' TO c##witness';
+    FOR t IN (SELECT table_name FROM all_tables WHERE owner = 'C##ADMIN_SYS_ORIGIN') LOOP
+        EXECUTE IMMEDIATE 'GRANT SELECT ON C##ADMIN_SYS_ORIGIN.' || t.table_name || ' TO c##origin_readOnly';
     END LOOP;
 END;
 /
 
--- 5. Création de l'utilisateur Amélioration avec tous les droits sur bdd_opti
+GRANT c##origin_readOnly TO c##witness;
+
+
+-- b. BDD optimisée
+-- Importation de la BDD optimisée
+ALTER SESSION SET CURRENT_SCHEMA = c##admin_sys_opti;
+@/Users/aurelienruppe/Documents/Cours/AdminBDD/DB/bdd_opti.sql
+
+-- Création de l'utilisateur Amélioration avec tous les droits sur bdd_opti
 CREATE USER c##improvement IDENTIFIED BY password_improvement;
 GRANT CONNECT, RESOURCE TO c##improvement;
 
+CREATE ROLE c##opti_readWrite;
+
 -- Accorder tous les privilèges sur les tables de bdd_opti
 BEGIN
-    FOR t IN (SELECT table_name FROM all_tables WHERE owner = 'C##NEW_SYS') LOOP
-        EXECUTE IMMEDIATE 'GRANT ALL PRIVILEGES ON C##NEW_SYS.' || t.table_name || ' TO c##improvement';
+    FOR t IN (SELECT table_name FROM all_tables WHERE owner = 'C##ADMIN_SYS_OPTI') LOOP
+        EXECUTE IMMEDIATE 'GRANT ALL PRIVILEGES ON C##ADMIN_SYS_OPTI.' || t.table_name || ' TO c##opti_readWrite';
     END LOOP;
 END;
 /
+
+GRANT c##opti_readWrite TO c##improvement;
