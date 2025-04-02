@@ -1,6 +1,19 @@
--- 1. Supprimer les utilisateurs c##witness, c##improvement et c##new_sys ainsi que leurs objets, s'ils existent
+-- 1. Suppression des tables associées aux utilisateurs
 BEGIN
-    FOR rec IN (SELECT username FROM dba_users WHERE username IN ('C##WITNESS', 'C##IMPROVEMENT', 'C##NEW_SYS')) LOOP
+    -- Supprimer toutes les tables des utilisateurs spécifiés
+    FOR t IN (SELECT owner, table_name
+              FROM all_tables
+              WHERE owner IN ('C##NEW_SYS', 'C##ADMIN_SYS_ORIGIN', 'C##ADMIN_SYS_OPTI', 'C##WITNESS', 'C##IMPROVEMENT')) LOOP
+        EXECUTE IMMEDIATE 'DROP TABLE ' || t.owner || '.' || t.table_name || ' CASCADE CONSTRAINTS';
+    END LOOP;
+END;
+/
+
+
+
+-- 2. Supprimer les utilisateurs c##witness, c##improvement et c##new_sys ainsi que leurs objets, s'ils existent
+BEGIN
+    FOR rec IN (SELECT username FROM dba_users WHERE username IN ('C##NEW_SYS', 'C##ADMIN_SYS_ORIGIN', 'C##ADMIN_SYS_OPTI', 'C##WITNESS', 'C##IMPROVEMENT')) LOOP
         EXECUTE IMMEDIATE 'DROP USER ' || rec.username || ' CASCADE';
     END LOOP;
 END;
@@ -8,7 +21,7 @@ END;
 
 
 
--- 2. Supprimer les rôles ROLE1, ROLE2 et ROLE3 ainsi que leurs objets, s'ils existent
+-- 3. Supprimer les rôles ROLE1, ROLE2 et ROLE3 ainsi que leurs objets, s'ils existent
 -- Suppression des rôles
 BEGIN
    FOR r IN (SELECT role 
@@ -22,23 +35,23 @@ END;
 
 
 
--- 3. Création de l'utilisateur SYS avec des privilèges administratifs
-CREATE USER c##new_sys IDENTIFIED BY password_sys;
+-- 4. Création de l'utilisateur SYS avec des privilèges administratifs
+CREATE USER c##new_sys IDENTIFIED BY "passwordsys";
 GRANT DBA TO c##new_sys;
 
 -- Se connecter sous l'utilisateur SYS pour exécuter les scripts SQL
 ALTER SESSION SET CURRENT_SCHEMA = c##new_sys;
 
--- Création des administrateurs des 2 BDD
-CREATE USER c##admin_sys_origin IDENTIFIED BY password_sys_origin;
+-- Création des administrateurs
+CREATE USER c##admin_sys_origin IDENTIFIED BY "password_sys_origin";
 GRANT DBA TO c##admin_sys_origin;
 
-CREATE USER c##admin_sys_opti IDENTIFIED BY password_sys_opti;
+CREATE USER c##admin_sys_opti IDENTIFIED BY "password_sys_opti";
 GRANT DBA TO c##admin_sys_opti;
 
 
 
--- 4. Création / importation des BDD
+-- 5. Création / importation des BDD
 SELECT name FROM v$database;
 
 -- a. BDD origine
@@ -47,7 +60,7 @@ ALTER SESSION SET CURRENT_SCHEMA = c##admin_sys_origin;
 @/Users/aurelienruppe/Documents/Cours/AdminBDD/DB/bdd_origin.sql
 
 -- Création de l'utilisateur témoin avec un accès lecture seule sur bdd_origin
-CREATE USER c##witness IDENTIFIED BY password_witness;
+CREATE USER c##witness IDENTIFIED BY "password_witness";
 GRANT CONNECT TO c##witness;
 
 CREATE ROLE c##origin_readOnly;
