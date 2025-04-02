@@ -1,6 +1,6 @@
 -- 1. Supprimer les utilisateurs c##witness, c##improvement et c##new_sys ainsi que leurs objets, s'ils existent
 BEGIN
-    FOR rec IN (SELECT username FROM dba_users WHERE username IN ('C##WITNESS', 'C##IMPROVEMENT', 'C##NEW_SYS')) LOOP
+    FOR rec IN (SELECT username FROM dba_users WHERE username IN ('C##NEW_SYS', 'C##ADMIN_SYS_ORIGIN', 'C##ADMIN_SYS_OPTI', 'C##WITNESS', 'C##IMPROVEMENT')) LOOP
         EXECUTE IMMEDIATE 'DROP USER ' || rec.username || ' CASCADE';
     END LOOP;
 END;
