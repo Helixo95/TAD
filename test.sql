@@ -49,7 +49,10 @@ END;
 CONNECT c##new_sys/password_sys@localhost:1521/bdd_origin;
 
 SELECT name FROM v$database;
+SELECT status FROM v$instance;
 
 SELECT INSTANCE_NAME, STATUS FROM v$instance;
 
 SELECT username FROM all_users ORDER BY username;
+
+SELECT PDB_NAME, STATUS FROM CDB_PDBS;
