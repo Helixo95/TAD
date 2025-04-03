@@ -1,5 +1,12 @@
 -- Test de la procédure de création de licences sur la base de données optimisée
 
+-- Création de la séquence pour incrémentation des identifiants de licences
+CREATE SEQUENCE seq_licence_id
+    START WITH 100
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
+
 -- Active l'affichage des messages de sortie
 SET SERVEROUTPUT ON;
 
@@ -23,7 +30,7 @@ BEGIN
         v_eleve_id := MOD(i, 100) + 1;    -- Exemple : 100 élèves différents
 
         -- Appel de la procédure pour créer une licence
-        create_licence(
+        C##ADMIN_SYS_OPTI.create_licence(
             p_cle_licence     => v_cle_licence,
             p_date_expiration => v_date_expiration,
             p_logiciel_id     => v_logiciel_id,

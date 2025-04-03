@@ -1,5 +1,12 @@
 -- Test de l'insertion directe de licences sur la base de données d'origine
 
+-- Création de la séquence pour incrémentation des identifiants de licences
+CREATE SEQUENCE seq_licence_id
+    START WITH 100
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
+
 -- Active l'affichage des messages de sortie
 SET SERVEROUTPUT ON;
 
