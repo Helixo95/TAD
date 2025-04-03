@@ -454,7 +454,8 @@ CREATE OR REPLACE FUNCTION create_eleve(
     p_password    IN VARCHAR2,
     p_classe      IN VARCHAR2,
     p_specialite  IN VARCHAR2,
-    p_filiere     IN VARCHAR2
+    p_filiere     IN VARCHAR2,
+    p_lieu        IN VARCHAR2
 ) RETURN NUMBER IS
     v_count   NUMBER;
     v_eleve_id NUMBER;
@@ -471,8 +472,8 @@ BEGIN
     -- Génération du nouvel identifiant et insertion
     v_eleve_id := seq_eleve_id.NEXTVAL;
     
-    INSERT INTO eleves (eleve_id, nom, prenom, email, password, classe, specialite, filiere)
-    VALUES (v_eleve_id, p_nom, p_prenom, p_email, p_password, p_classe, p_specialite, p_filiere);
+    INSERT INTO eleves (eleve_id, nom, prenom, email, password, classe, specialite, filiere, lieu)
+    VALUES (v_eleve_id, p_nom, p_prenom, p_email, p_password, p_classe, p_specialite, p_filiere, p_lieu);
     
     COMMIT;
     
