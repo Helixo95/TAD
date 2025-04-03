@@ -2,16 +2,25 @@
 
 ## Sommaire
 [Prérequis](#prérequis)
+[Récupération de l'image Docker]()
+[Lancer le conteneur]()
+[Extensions VSCode recommandées]()
+[Récupération du code]()
+[Scripts SQL]()
+[Lancer les scripts de configuration de la BDD]()
+[Lancer des tests]()
+[Se connecter à la BDD depuis VSCode]()
 
 
 ## Prérequis
 
 ### Récupération de l'image Docker
 Afin de pouvoir lancer notre BDD, vous devez vous munir d'un conteneur oracle, qui simulera la base de données (BDD). \
-Vous pouvez récupérer l'image depuis internet, en exécutant la commande : ```docker pull container-registry.oracle.com/database/free:latest```. \
+Vous pouvez récupérer l'image depuis internet, en exécutant la commande : \
+```docker pull container-registry.oracle.com/database/free:latest```. \
 Pour plus d'informations, nous vous conseillons de vous référer au site officiel d'Oracle disponible [ici](https://www.oracle.com/fr/database/free/get-started/).
 
-### Lancement du conteneur
+### Lancer le conteneur
 Une fois l'image récupérée, il faut lancer le conteneur. Vous pouvez utiliser la commande suivante :
 ```
 docker run --name oracle-db \
@@ -29,6 +38,7 @@ Pour vous faciliter l'usage d'Oracle SQL et la connexion à la BDD, nous vous co
 * SQL Server
 * SQL Database Projects
 
+Il vous faudra configurer ces extensions pour qu'elles puissent se connecter à votre conteneur.
 
 ## Récupération du code
 Pour récupérer le code, il vous suffit de cloner ce repo. Une fois ce repo cloné, ouvrez le dossier avec VSCode. \
@@ -45,13 +55,15 @@ Dans ce projet, vous trouverez différents scripts SQL :
 
 
 ## Lancer les scripts de configuration de la BDD
-
+Pour lancer les scripts de configuration de la BDD, il vous faut ouvrir `users.sql` dans VSCode. Une fois ce scrit ouvert, cliquez sur "Lancer le script" ou sur la touche "F5". \
+Une fois ce script terminé, votre BDD est utilisable.
 
 
 ## Lancer des tests
+Si vous souhaitez lancer des tests sur votre BDD, vous pouvez vous rendre dans le dossier "tests", ouvrir les scripts et les exécuter. Seul le script "test_in_terminal" ne fonctionnera pas : il s'agit de commandes que vous pouvez rentrer directement dans votre terminal (cf [Se connecter à la BDD depuis VSCode](#se-connecter-à-la-bdd-depuis-vscode)).
 
 
-
+## Se connecter à la BDD depuis VSCode
 
 Se connecter en tant qu'administrateur à la BDD :
 * Ouvrir un terminal sur VSCode
