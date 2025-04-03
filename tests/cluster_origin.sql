@@ -29,14 +29,11 @@ BEGIN
 
     -- Afficher le temps d'exécution
     DBMS_OUTPUT.PUT_LINE('Temps d exécution pour la jointure élèves-tickets : ' || v_diff);
-END;
 
+COMMIT;
+
+--------------------------------------------------------------------------
 -- Test simulation Clusters Équipement-Élève
-DECLARE
-    v_start TIMESTAMP;
-    v_end TIMESTAMP;
-    v_diff INTERVAL DAY TO SECOND;
-BEGIN
     -- Temps de début
     v_start := SYSTIMESTAMP;
 
@@ -53,14 +50,10 @@ BEGIN
 
     -- Afficher le temps d'exécution
     DBMS_OUTPUT.PUT_LINE('Temps d exécution pour la jointure équipement-élève : ' || v_diff);
-END;
 
+COMMIT;
+--------------------------------------------------------------------------
 -- Test simulation Clusters Logiciel-Licences
-DECLARE
-    v_start TIMESTAMP;
-    v_end TIMESTAMP;
-    v_diff INTERVAL DAY TO SECOND;
-BEGIN
     -- Temps de début
     v_start := SYSTIMESTAMP;
 
