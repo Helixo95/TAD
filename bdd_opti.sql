@@ -277,7 +277,7 @@ AFTER INSERT ON eleves
 FOR EACH ROW
 DECLARE
 BEGIN
-  -- Création de trois tickets automatiques
+  -- Création de trois tickets automatiques pour chaque élève
   INSERT INTO tickets (ticket_id, sujet, description, statut, date_ouverture, eleve_id)
   VALUES (SYS_GUID(), 'Ticket automatique 1', 'Ticket généré automatiquement lors de la création de l''élève', 0, CURRENT_TIMESTAMP, :NEW.eleve_id);
 
@@ -296,7 +296,7 @@ EXCEPTION
     -- En cas d'erreur, afficher un message d'erreur
     DBMS_OUTPUT.PUT_LINE('Erreur lors de l''insertion des tickets ou du log pour l''élève ID : ' || :NEW.eleve_id);
 END;
-
+/
 
 
 -- Trigger pour la cloture / résolution du ticket
