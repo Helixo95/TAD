@@ -105,31 +105,29 @@ DECLARE
     v_start TIMESTAMP;
     v_end TIMESTAMP;
     v_diff INTERVAL DAY TO SECOND;
+    v_statut INT := 2; -- Statut "résolu"
     
-    -- Définir le statut recherché (0: ouvert, 1: en cours, 2: résolu, 3: fermé)
-    v_statut INT := 2; -- Changer le statut si besoin
+    -- Définir le type de table pour collecter plusieurs tickets
+    TYPE ticket_table_type IS TABLE OF tickets%ROWTYPE;
+    v_tickets ticket_table_type;
     
-    -- Déclarer un curseur pour récupérer plusieurs tickets
-    CURSOR cur_tickets IS SELECT * FROM tickets WHERE statut = v_statut;
-
-    v_ticket cur_tickets%ROWTYPE;
     v_count INTEGER := 0;
 BEGIN
     -- Démarrer la mesure de temps
     v_start := SYSTIMESTAMP;
 
-    -- Ouverture et lecture du curseur
-    OPEN cur_tickets;
-    LOOP
-        FETCH cur_tickets INTO v_ticket;
-        EXIT WHEN cur_tickets%NOTFOUND;
-        
+    -- Récupérer les tickets avec BULK COLLECT
+    SELECT * 
+    BULK COLLECT INTO v_tickets
+    FROM tickets
+    WHERE statut = v_statut;
+
+    -- Parcourir les tickets récupérés
+    FOR i IN 1..v_tickets.COUNT LOOP
         v_count := v_count + 1;
-        
-        -- Affiche chaque ticket (optionnel, pour vérification)
-        DBMS_OUTPUT.PUT_LINE('Ticket ID: '|| v_ticket.ticket_id ||' - Sujet: '|| v_ticket.sujet);
+        -- Afficher chaque ticket (optionnel)
+        DBMS_OUTPUT.PUT_LINE('Ticket ID: ' || v_tickets(i).ticket_id || ' - Sujet: ' || v_tickets(i).sujet);
     END LOOP;
-    CLOSE cur_tickets;
 
     -- Fin mesure du temps
     v_end := SYSTIMESTAMP;
@@ -139,6 +137,6 @@ BEGIN
 
     -- Affichage des résultats
     DBMS_OUTPUT.PUT_LINE('Nombre de tickets trouvés : ' || v_count);
-    DBMS_OUTPUT.PUT_LINE('Temps total pour SELECT par statut ('||v_statut||') : ' || v_diff);
+    DBMS_OUTPUT.PUT_LINE('Temps total pour SELECT par statut (' || v_statut || ') : ' || v_diff);
 END;
-/
+
