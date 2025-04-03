@@ -21,6 +21,7 @@ DECLARE
     v_classe VARCHAR2(50);
     v_specialite VARCHAR2(50);
     v_filiere VARCHAR2(50);
+    v_lieu VARCHAR2(5);
 BEGIN
 -- Insertion de licences
     -- Temps de début
@@ -30,7 +31,7 @@ BEGIN
         -- Génération de valeurs pour les paramètres
         v_cle_licence := 'CLE' || TO_CHAR(i, 'FM0000');
         v_logiciel_id := MOD(i, 10) + 1; -- Exemple : 10 logiciels différents
-        v_eleve_id := MOD(i, 100) + 1;    -- Exemple : 100 élèves différents
+        v_eleve_id := MOD(i, 50) + 1;    -- Exemple : 100 élèves différents
 
         -- Appel de la procédure pour créer une licence
         C##ADMIN_SYS_OPTI.create_licence(
@@ -67,9 +68,16 @@ BEGIN
         v_specialite := 'Specialite' || (MOD(i, 5) + 1);  -- Spécialité alternée (1 à 5)
         v_filiere := 'Filiere' || (MOD(i, 4) + 1);  -- Filière alternée (1 à 4)
 
+        -- Définir le lieu (partition)
+        IF MOD(i, 2) = 0 THEN
+            v_lieu := 'Cergy';
+        ELSE
+            v_lieu := 'Pau';
+        END IF;
+
         -- Appeler la fonction pour insérer l'élève
         -- Remarque : La fonction doit déjà être créée dans la base de données
-        v_eleve_id := C##ADMIN_SYS_OPTI.create_eleve(v_nom, v_prenom, v_email, v_password, v_classe, v_specialite, v_filiere);
+        v_eleve_id := C##ADMIN_SYS_OPTI.create_eleve(v_nom, v_prenom, v_email, v_password, v_classe, v_specialite, v_filiere, v_lieu);
 
         -- Affichage de l'ID de l'élève inséré (facultatif)
         DBMS_OUTPUT.PUT_LINE('Élève inséré avec ID : ' || v_eleve_id);
@@ -90,14 +98,14 @@ BEGIN
     -- Temps de début
     v_start := SYSTIMESTAMP;
 
-    -- Insérer 3000 tickets
+    -- Insérer 1000 tickets
     FOR i IN 4101..5100 LOOP
         -- Générer des données fictives pour chaque ticket
         v_sujet := 'Ticket sujet ' || i;  -- Sujet générique
         v_description := 'Description du ticket ' || i;  -- Description générique
 
         -- Sélectionner un élève existant
-        v_eleve_id := 1 MOD(i, 100);  -- ID d'élève, en utilisant des élèves de 1 à 100
+        v_eleve_id := 1 + MOD(1, 100);  -- ID d'élève, en utilisant des élèves de 1 à 100
 
         -- Appel de la procédure pour insérer le ticket
         -- Remarque : La procédure doit déjà être créée dans la base de données
