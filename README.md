@@ -8,8 +8,8 @@
 
 ### Récupération de l'image Docker
 Afin de pouvoir lancer notre BDD, vous devez vous munir d'un conteneur oracle, qui simulera la base de données (BDD). \
-Vous pouvez récupérer l'image depuis internet, en exécutant la commande : `docker pull container-registry.oracle.com/database/free:latest`. \
-Pour plus d'informations, nous vous conseillons de vous référer au site officiel d'Oracle : `https://www.oracle.com/fr/database/free/get-started/`.
+Vous pouvez récupérer l'image depuis internet, en exécutant la commande : ```docker pull container-registry.oracle.com/database/free:latest```. \
+Pour plus d'informations, nous vous conseillons de vous référer au site officiel d'Oracle disponible [ici](https://www.oracle.com/fr/database/free/get-started/).
 
 ### Lancement du conteneur
 Une fois l'image récupérée, il faut lancer le conteneur. Vous pouvez utiliser la commande suivante :
@@ -34,6 +34,23 @@ Pour vous faciliter l'usage d'Oracle SQL et la connexion à la BDD, nous vous co
 Pour récupérer le code, il vous suffit de cloner ce repo. Une fois ce repo cloné, ouvrez le dossier avec VSCode. \
 Commencez par cliquer sur la loupe dans la barre de gauche et cherchez `{path-to-change}`. Ce chemin représente le chemin vers le dossier contenant les scripts SQL.
 Il faudra donc le remplacer par le chemin que vous avez partagé avec le conteneur et copier les scripts SQL clonés à cet endroit.
+
+
+## Scripts SQL
+Dans ce projet, vous trouverez différents scripts SQL :
+* users.sql : nettoye la BDD à chaque lancement puis de recréer les utilisateurs, tables, rôles et la BDD.
+* bdd_origin.sql : crée les tables et la partitions des données entre 2 sites. Il fait appel à `insertions.sql`.
+* bdd_opti.sql : fais appel à `bdd_origin.sql` pour la création des tables et l'insertion des données. Il crée des vues, indexs, clusters... qui permettent d'améliorer la gestion, maintenabilité et rapidité de la BDD.
+* insertions.sql : insertions de données par défaut dans la BDD (90 par table).
+
+
+## Lancer les scripts de configuration de la BDD
+
+
+
+## Lancer des tests
+
+
 
 
 Se connecter en tant qu'administrateur à la BDD :
