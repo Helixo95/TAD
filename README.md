@@ -17,7 +17,9 @@
 ### Récupération de l'image Docker
 Afin de pouvoir lancer notre BDD, vous devez vous munir d'un conteneur oracle, qui simulera la base de données (BDD). \
 Vous pouvez récupérer l'image depuis internet, en exécutant la commande : \
-```docker pull container-registry.oracle.com/database/free:latest```. \
+```
+docker pull container-registry.oracle.com/database/free:latest
+``` \
 Pour plus d'informations, nous vous conseillons de vous référer au site officiel d'Oracle disponible [ici](https://www.oracle.com/fr/database/free/get-started/).
 
 ### Lancer le conteneur
