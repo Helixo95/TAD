@@ -15,6 +15,10 @@ CREATE TABLE eleves (
     specialite  VARCHAR2(50),
     filiere     VARCHAR2(50),
     lieu        VARCHAR2(5)
+)
+PARTITION BY LIST (lieu) (
+    PARTITION cergy_part VALUES ('Cergy'),
+    PARTITION pau_part VALUES ('Pau')
 );
 
 ------------------------------------------------------------------------------

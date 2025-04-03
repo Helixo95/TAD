@@ -16,3 +16,5 @@ Pour voir les tables auxquelles l'utilisateur a accès : `SELECT TABLE_NAME FROM
 
 Vérifier si la création des utilisateurs a fonctionné : `connect c##witness/password_witness@localhost:1521/free;`
 Vérifier si la création des utilisateurs a fonctionné : `connect c##improvement/password_improvement@localhost:1521/free;`
+
+Accéder aux tables avec les comptes de service : `SELECT * FROM C##ADMIN_SYS{opti | origin}.{nom de la table souhaitée}`
