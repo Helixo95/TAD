@@ -412,6 +412,13 @@ END;
 /
 
 
+-- Création de la séquence pour incrémentation des identifiants de licences
+CREATE SEQUENCE seq_licence_id_opti_test
+    START WITH 91
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
+
 -- Création d'une licence
 CREATE OR REPLACE PROCEDURE create_licence(
     p_cle_licence     IN VARCHAR2,
@@ -421,7 +428,7 @@ CREATE OR REPLACE PROCEDURE create_licence(
 ) IS
 BEGIN
     INSERT INTO licences (licence_id, cle_licence, date_expiration, logiciel_id, eleve_id)
-    VALUES (seq_licence_id.NEXTVAL, p_cle_licence, p_date_expiration, p_logiciel_id, p_eleve_id);
+    VALUES (seq_licence_id_opti_test.NEXTVAL, p_cle_licence, p_date_expiration, p_logiciel_id, p_eleve_id);
     
     COMMIT;
 EXCEPTION
@@ -432,6 +439,12 @@ END create_licence;
 /
 
 
+-- Création de la séquence pour incrémentation des identifiants d'élèves
+CREATE SEQUENCE seq_eleve_id
+    START WITH 91
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
 
 -- Création d'un élève (fonction)
 CREATE OR REPLACE FUNCTION create_eleve(
