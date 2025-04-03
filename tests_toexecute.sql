@@ -14,10 +14,23 @@ DECLARE
     v_diff INTERVAL DAY TO SECOND;
     v_lieu VARCHAR2(5);
     l_count INT := 0;  -- Déclaration du compteur
+    v_email1 VARCHAR2(50) := 'sarah.lemoine@example.com'; -- Changer l'email si besoin
+    v_email2 VARCHAR2(50) := 'email1000@example.com'; -- Changer l'email si besoin
+    v_statut INT := 2; -- Statut "résolu"
+    user_to_use VARCHAR2(50) := 'C##ADMIN_SYS_ORIGIN'; -- Nom de l'utilisateur
+    
+    -- Définir le type de table pour collecter plusieurs tickets
+    TYPE ticket_table_type IS TABLE OF user_to_use.tickets%ROWTYPE;
+    v_tickets ticket_table_type;
+    
+    v_eleve user_to_use.eleves%ROWTYPE; -- Variable pour un élève
+    
+    v_count INTEGER := 0; -- Compteur pour les tickets
 BEGIN
     -- Temps de début
     v_start := SYSTIMESTAMP;
 
+    -- Ajout de 1000 élèves avec tickets et logs
     FOR i IN 1..1000 LOOP
         -- Alterne entre Cergy et Pau
         IF MOD(i, 2) = 0 THEN
@@ -27,13 +40,13 @@ BEGIN
         END IF;
 
         -- Ajout d'un élève avec des tickets et logs
-        INSERT INTO eleves (eleve_id, nom, prenom, email, password, classe, specialite, filiere, lieu)
+        INSERT INTO user_to_use.eleves (eleve_id, nom, prenom, email, password, classe, specialite, filiere, lieu)
         VALUES (90 + i, 'Nom' || i, 'Prénom' || i, 'email' || i || '@example.com', 'pass' || i, 'Classe' || i, 'Spécialité' || i, 'Filière' || i, v_lieu);
 
-        INSERT INTO tickets (ticket_id, sujet, description, statut, date_ouverture, date_fermeture, eleve_id, assigne_id)
+        INSERT INTO user_to_use.tickets (ticket_id, sujet, description, statut, date_ouverture, date_fermeture, eleve_id, assigne_id)
         VALUES (i + 1000, 'Problème ' || i, 'Problème numéro ' || i, 0, CURRENT_TIMESTAMP, NULL, 90 + i, 1);
 
-        INSERT INTO logs (log_id, action, date_action, eleve_id, ticket_id)
+        INSERT INTO user_to_use.logs (log_id, action, date_action, eleve_id, ticket_id)
         VALUES (i + 2000, 'Création du ticket', CURRENT_TIMESTAMP, 90 + i, i + 1000);
 
         -- Afficher l'identifiant généré avec l'ID calculé
@@ -56,18 +69,8 @@ BEGIN
 
     -- Afficher le nombre d'élèves insérés
     DBMS_OUTPUT.PUT_LINE('Nombre d élèves insérés : ' || l_count);
-END;
 
-------------------------------------------------------------
--- Sélection d'un élève par son email
-DECLARE
-    v_start TIMESTAMP;
-    v_end TIMESTAMP;
-    v_diff INTERVAL DAY TO SECOND;
-    v_eleve eleves%ROWTYPE; -- Correctement défini ici
-    v_email1 VARCHAR2(50) := 'sarah.lemoine@example.com'; -- Changer l'email si besoin
-    v_email2 VARCHAR2(50) := 'email1000@example.com'; -- Changer l'email si besoin
-BEGIN
+    -- Sélection d'un élève par son email
     -- Démarrer mesure de temps
     v_start := SYSTIMESTAMP;
 
@@ -96,22 +99,8 @@ BEGIN
 
     -- Affichage des résultats
     DBMS_OUTPUT.PUT_LINE('Temps pour SELECT : ' || v_diff);
-END;
 
-------------------------------------------------------------
--- Tester la recherche des tickets par statut
-DECLARE
-    v_start TIMESTAMP;
-    v_end TIMESTAMP;
-    v_diff INTERVAL DAY TO SECOND;
-    v_statut INT := 2; -- Statut "résolu"
-    
-    -- Définir le type de table pour collecter plusieurs tickets
-    TYPE ticket_table_type IS TABLE OF tickets%ROWTYPE;
-    v_tickets ticket_table_type;
-    
-    v_count INTEGER := 0;
-BEGIN
+    -- Tester la recherche des tickets par statut
     -- Démarrer la mesure de temps
     v_start := SYSTIMESTAMP;
 
