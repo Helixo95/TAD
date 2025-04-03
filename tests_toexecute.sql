@@ -1,8 +1,12 @@
+-- Active l'affichage des messages de sortie
 SET SERVEROUTPUT ON;
 
---
+
+------------------------------------------------------------
+------------------- Tests sur les indexs -------------------
+------------------------------------------------------------
+
 -- Ajout de 1000 élèves avec tickets et logs
---
 
 DECLARE
     i INT;
@@ -36,7 +40,7 @@ BEGIN
             INSERT INTO logs (log_id, action, date_action, eleve_id, ticket_id)
             VALUES (i + 2000, 'Création du ticket', CURRENT_TIMESTAMP, 90 + i, i + 1000);
 
-            -- Afficher l'identifiant généré avec CURRVAL
+            -- Afficher l'identifiant généré avec l'ID calculé
             DBMS_OUTPUT.PUT_LINE('Élève inséré avec ID : ' || (90 + i));
             
             -- Compter le nombre d'élèves insérés
@@ -58,3 +62,43 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Nombre d élèves insérés : ' || l_count);
     END;
 END;
+
+
+-- Sélection d'un élève par son email
+DECLARE
+    v_start TIMESTAMP;
+    v_end TIMESTAMP;
+    v_diff INTERVAL DAY TO SECOND;
+    v_eleve eleves%ROWTYPE;
+    v_email1 VARCHAR2(50) := 'sarah.lemoine@example.com'; -- Changer l'email si besoin
+    v_email2 VARCHAR2(50) := 'email1000@example.com'; -- Changer l'email si besoin
+BEGIN
+    -- Démarrer mesure de temps
+    v_start := SYSTIMESTAMP;
+
+    -- SELECT de l'élève par email
+    SELECT * FROM eleves WHERE email = v_email1;
+    SELECT * FROM eleves WHERE email = v_email2;
+
+    -- Terminer mesure de temps
+    v_end := SYSTIMESTAMP;
+
+    -- Calcul du temps écoulé
+    v_diff := v_end - v_start;
+
+    -- Affichage des résultats
+    DBMS_OUTPUT.PUT_LINE('Élève trouvé : ID=' || v_eleve.eleve_id || ', Nom=' || v_eleve.nom || ', Prénom=' || v_eleve.prenom);
+    DBMS_OUTPUT.PUT_LINE('Temps pour SELECT : ' || v_diff);
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Aucun élève trouvé avec l''email 1 : ' || v_email1);
+        DBMS_OUTPUT.PUT_LINE('Aucun élève trouvé avec l''email 2 : ' || v_email2);
+END;
+/
+
+
+-- Tester la recherche des tickets par statut
+-- Récupérer les tickets avec le statut 'résolu' (2)
+SELECT * FROM tickets WHERE statut = 2;
+
