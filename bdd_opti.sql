@@ -1,6 +1,5 @@
 -- CREATION DES VUES, CLUSTERS, INDEXS... POUR OPTIMISER LA BDD ORIGINALE
 @/Users/aurelienruppe/Documents/Cours/AdminBDD/DB/bdd_origin.sql
-@/Users/aurelienruppe/Documents/Cours/AdminBDD/DB/insertions.sql
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 -- VUES
@@ -40,7 +39,8 @@ SELECT
     l.date_expiration,
     lg.nom               AS nom_logiciel,
     e.nom                AS nom_eleve,
-    e.prenom             AS prenom_eleve
+    e.prenom             AS prenom_eleve,
+    e.classe
 FROM licences l
 LEFT JOIN logiciels lg ON l.logiciel_id = lg.logiciel_id
 LEFT JOIN eleves e ON l.eleve_id = e.eleve_id;
@@ -272,12 +272,16 @@ CREATE INDEX cl_logiciel_licences_idx ON CLUSTER cl_logiciel_licences;
 
 -- Trigger pour la création automatique de tickets lors de l'insertion d'un
 -- nouvel élève dans la table eleves
+
+CREATE SEQUENCE seq_ticket_id START WITH 5000 INCREMENT BY 1 NOCACHE NOCYCLE;
+CREATE SEQUENCE seq_log_id START WITH 5000 INCREMENT BY 1 NOCACHE NOCYCLE;
+
 CREATE OR REPLACE TRIGGER trg_after_insert_eleves
 AFTER INSERT ON eleves
 FOR EACH ROW
 DECLARE
 BEGIN
-  -- Création de trois tickets automatiques
+  -- Création de trois tickets automatiques pour chaque élève
   INSERT INTO tickets (ticket_id, sujet, description, statut, date_ouverture, eleve_id)
   VALUES (seq_ticket_id.NEXTVAL, 'Ticket automatique 1', 'Ticket généré automatiquement lors de la création de l''élève', 0, CURRENT_TIMESTAMP, :NEW.eleve_id);
 
@@ -290,6 +294,11 @@ BEGIN
   -- Enregistrement du log de création de l'élève
   INSERT INTO logs (log_id, action, date_action, eleve_id, ticket_id)
   VALUES (seq_log_id.NEXTVAL, 'Création de l''élève', CURRENT_TIMESTAMP, :NEW.eleve_id, NULL);
+
+EXCEPTION
+  WHEN OTHERS THEN
+    -- En cas d'erreur, afficher un message d'erreur
+    DBMS_OUTPUT.PUT_LINE('Erreur lors de l''insertion des tickets ou du log pour l''élève ID : ' || :NEW.eleve_id);
 END;
 /
 
@@ -403,6 +412,13 @@ END;
 /
 
 
+-- Création de la séquence pour incrémentation des identifiants de licences
+CREATE SEQUENCE seq_licence_id_opti_test
+    START WITH 91
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
+
 -- Création d'une licence
 CREATE OR REPLACE PROCEDURE create_licence(
     p_cle_licence     IN VARCHAR2,
@@ -412,7 +428,7 @@ CREATE OR REPLACE PROCEDURE create_licence(
 ) IS
 BEGIN
     INSERT INTO licences (licence_id, cle_licence, date_expiration, logiciel_id, eleve_id)
-    VALUES (seq_licence_id.NEXTVAL, p_cle_licence, p_date_expiration, p_logiciel_id, p_eleve_id);
+    VALUES (seq_licence_id_opti_test.NEXTVAL, p_cle_licence, p_date_expiration, p_logiciel_id, p_eleve_id);
     
     COMMIT;
 EXCEPTION
@@ -423,6 +439,12 @@ END create_licence;
 /
 
 
+-- Création de la séquence pour incrémentation des identifiants d'élèves
+CREATE SEQUENCE seq_eleve_id
+    START WITH 91
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
 
 -- Création d'un élève (fonction)
 CREATE OR REPLACE FUNCTION create_eleve(
@@ -432,7 +454,8 @@ CREATE OR REPLACE FUNCTION create_eleve(
     p_password    IN VARCHAR2,
     p_classe      IN VARCHAR2,
     p_specialite  IN VARCHAR2,
-    p_filiere     IN VARCHAR2
+    p_filiere     IN VARCHAR2,
+    p_lieu        IN VARCHAR2
 ) RETURN NUMBER IS
     v_count   NUMBER;
     v_eleve_id NUMBER;
@@ -449,8 +472,8 @@ BEGIN
     -- Génération du nouvel identifiant et insertion
     v_eleve_id := seq_eleve_id.NEXTVAL;
     
-    INSERT INTO eleves (eleve_id, nom, prenom, email, password, classe, specialite, filiere)
-    VALUES (v_eleve_id, p_nom, p_prenom, p_email, p_password, p_classe, p_specialite, p_filiere);
+    INSERT INTO eleves (eleve_id, nom, prenom, email, password, classe, specialite, filiere, lieu)
+    VALUES (v_eleve_id, p_nom, p_prenom, p_email, p_password, p_classe, p_specialite, p_filiere, p_lieu);
     
     COMMIT;
     
