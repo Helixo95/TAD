@@ -69,6 +69,7 @@ BEGIN
     -- Afficher le nombre d'élèves insérés
     DBMS_OUTPUT.PUT_LINE('Nombre d élèves insérés : ' || l_count);
 
+--------------------------------------------------------------------------
     -- Sélection d'un élève par son email
     -- Démarrer mesure de temps
     v_start := SYSTIMESTAMP;
@@ -99,6 +100,7 @@ BEGIN
     -- Affichage des résultats
     DBMS_OUTPUT.PUT_LINE('Temps pour SELECT : ' || v_diff);
 
+--------------------------------------------------------------------------
     -- Tester la recherche des tickets par statut
     -- Démarrer la mesure de temps
     v_start := SYSTIMESTAMP;
