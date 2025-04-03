@@ -39,7 +39,8 @@ SELECT
     l.date_expiration,
     lg.nom               AS nom_logiciel,
     e.nom                AS nom_eleve,
-    e.prenom             AS prenom_eleve
+    e.prenom             AS prenom_eleve,
+    e.classe
 FROM licences l
 LEFT JOIN logiciels lg ON l.logiciel_id = lg.logiciel_id
 LEFT JOIN eleves e ON l.eleve_id = e.eleve_id;
