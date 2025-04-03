@@ -22,19 +22,8 @@ BEGIN
         END IF;
 
         -- Insertion de l'élève
-        INSERT INTO eleves (
-            eleve_id, nom, prenom, email, password, classe, specialite, filiere, lieu
-        ) VALUES (
-            eleves_seq.NEXTVAL,
-            'Nom'||i,
-            'Prenom'||i,
-            'user'||i||'@example.com',
-            'password'||i,
-            'Classe'||MOD(i,3),
-            'Specialite'||MOD(i,2),
-            'Filiere'||MOD(i,4),
-            v_lieu
-        );
+        INSERT INTO eleves (eleve_id, nom, prenom, email, password, classe, specialite, filiere, lieu) 
+        VALUES (eleves_seq.NEXTVAL, 'Nom'||i, 'Prenom'||i, 'user'||i||'@example.com', 'password'||i, 'Classe'||MOD(i,3), 'Specialite'||MOD(i,2), 'Filiere'||MOD(i,4), v_lieu);
 
         -- Afficher l'identifiant généré avec CURRVAL
         DBMS_OUTPUT.PUT_LINE('Élève inséré avec ID : ' || eleves_seq.CURRVAL);
