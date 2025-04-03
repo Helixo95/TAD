@@ -1,0 +1,80 @@
+-- Tests de performance pour la base de données avec clusters
+
+-- Active l'affichage des messages de sortie
+SET SERVEROUTPUT ON;
+
+------------------------------------------------------------
+------------------ Tests sur les clusters ------------------
+------------------------------------------------------------
+
+-- Test simulation Clusters élèves-tickets
+DECLARE
+    v_start TIMESTAMP;
+    v_end TIMESTAMP;
+    v_diff INTERVAL DAY TO SECOND;
+BEGIN
+    -- Temps de début
+    v_start := SYSTIMESTAMP;
+
+    -- Requête avec clusters (sur bdd_opti)
+    SELECT e.nom, t.ticket_id
+    FROM eleves e
+    JOIN tickets t ON e.eleve_id = t.eleve_id;
+
+    -- Temps de fin
+    v_end := SYSTIMESTAMP;
+
+    -- Calculer la différence de temps
+    v_diff := v_end - v_start;
+
+    -- Afficher le temps d'exécution
+    DBMS_OUTPUT.PUT_LINE('Temps d exécution pour la jointure élèves-tickets : ' || v_diff);
+END;
+
+-- Test simulation Clusters Équipement-Élève
+DECLARE
+    v_start TIMESTAMP;
+    v_end TIMESTAMP;
+    v_diff INTERVAL DAY TO SECOND;
+BEGIN
+    -- Temps de début
+    v_start := SYSTIMESTAMP;
+
+    -- Requête avec clusters (sur bdd_opti)
+    SELECT e.nom, eq.equipement_id
+    FROM eleves e
+    JOIN equipements eq ON e.eleve_id = eq.eleve_id;
+
+    -- Temps de fin
+    v_end := SYSTIMESTAMP;
+
+    -- Calculer la différence de temps
+    v_diff := v_end - v_start;
+
+    -- Afficher le temps d'exécution
+    DBMS_OUTPUT.PUT_LINE('Temps d exécution pour la jointure équipement-élève : ' || v_diff);
+END;
+
+-- Test simulation Clusters Logiciel-Licences
+DECLARE
+    v_start TIMESTAMP;
+    v_end TIMESTAMP;
+    v_diff INTERVAL DAY TO SECOND;
+BEGIN
+    -- Temps de début
+    v_start := SYSTIMESTAMP;
+
+    -- Requête avec clusters (sur bdd_opti)
+    SELECT l.licence_id, s.logiciel_id
+    FROM licences l
+    JOIN logiciels s ON l.logiciel_id = s.logiciel_id;
+
+    -- Temps de fin
+    v_end := SYSTIMESTAMP;
+
+    -- Calculer la différence de temps
+    v_diff := v_end - v_start;
+
+    -- Afficher le temps d'exécution
+    DBMS_OUTPUT.PUT_LINE('Temps d exécution pour la jointure logiciel-licences : ' || v_diff);
+END;
