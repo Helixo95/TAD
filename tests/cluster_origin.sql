@@ -18,8 +18,8 @@ BEGIN
 
     -- Requête sans clusters (sur bdd_origin)
     SELECT e.nom, t.ticket_id
-    FROM eleves e
-    JOIN tickets t ON e.eleve_id = t.eleve_id;
+    FROM C##ADMIN_SYS_ORIGIN.eleves e
+    JOIN C##ADMIN_SYS_ORIGIN.tickets t ON e.eleve_id = t.eleve_id;
 
     -- Temps de fin
     v_end := SYSTIMESTAMP;
@@ -39,8 +39,8 @@ COMMIT;
 
     -- Requête sans clusters (sur bdd_origin)
     SELECT e.nom, eq.equipement_id
-    FROM eleves e
-    JOIN equipements eq ON e.eleve_id = eq.eleve_id;
+    FROM C##ADMIN_SYS_ORIGIN.eleves e
+    JOIN C##ADMIN_SYS_ORIGIN.equipements eq ON e.eleve_id = eq.eleve_id;
 
     -- Temps de fin
     v_end := SYSTIMESTAMP;
@@ -59,8 +59,8 @@ COMMIT;
 
     -- Requête sans clusters (sur bdd_origin)
     SELECT l.licence_id, s.logiciel_id
-    FROM licences l
-    JOIN logiciels s ON l.logiciel_id = s.logiciel_id;
+    FROM C##ADMIN_SYS_ORIGIN.licences l
+    JOIN C##ADMIN_SYS_ORIGIN.logiciels s ON l.logiciel_id = s.logiciel_id;
 
     -- Temps de fin
     v_end := SYSTIMESTAMP;
