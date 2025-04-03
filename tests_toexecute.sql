@@ -65,6 +65,7 @@ END;
 
 
 -- Sélection d'un élève par son email
+
 DECLARE
     v_start TIMESTAMP;
     v_end TIMESTAMP;
@@ -99,6 +100,45 @@ END;
 
 
 -- Tester la recherche des tickets par statut
--- Récupérer les tickets avec le statut 'résolu' (2)
-SELECT * FROM tickets WHERE statut = 2;
 
+DECLARE
+    v_start TIMESTAMP;
+    v_end TIMESTAMP;
+    v_diff INTERVAL DAY TO SECOND;
+    
+    -- Définir le statut recherché (0: ouvert, 1: en cours, 2: résolu, 3: fermé)
+    v_statut INT := 2; -- Changer le statut si besoin
+    
+    -- Déclarer un curseur pour récupérer plusieurs tickets
+    CURSOR cur_tickets IS SELECT * FROM tickets WHERE statut = v_statut;
+
+    v_ticket cur_tickets%ROWTYPE;
+    v_count INTEGER := 0;
+BEGIN
+    -- Démarrer la mesure de temps
+    v_start := SYSTIMESTAMP;
+
+    -- Ouverture et lecture du curseur
+    OPEN cur_tickets;
+    LOOP
+        FETCH cur_tickets INTO v_ticket;
+        EXIT WHEN cur_tickets%NOTFOUND;
+        
+        v_count := v_count + 1;
+        
+        -- Affiche chaque ticket (optionnel, pour vérification)
+        DBMS_OUTPUT.PUT_LINE('Ticket ID: '|| v_ticket.ticket_id ||' - Sujet: '|| v_ticket.sujet);
+    END LOOP;
+    CLOSE cur_tickets;
+
+    -- Fin mesure du temps
+    v_end := SYSTIMESTAMP;
+
+    -- Calcul du temps écoulé
+    v_diff := v_end - v_start;
+
+    -- Affichage des résultats
+    DBMS_OUTPUT.PUT_LINE('Nombre de tickets trouvés : ' || v_count);
+    DBMS_OUTPUT.PUT_LINE('Temps total pour SELECT par statut ('||v_statut||') : ' || v_diff);
+END;
+/
