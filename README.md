@@ -2,21 +2,21 @@
 
 ## Sommaire
 [Prérequis](#prérequis)
-[Récupération de l'image Docker]()
-[Lancer le conteneur]()
-[Extensions VSCode recommandées]()
-[Récupération du code]()
-[Scripts SQL]()
-[Lancer les scripts de configuration de la BDD]()
-[Lancer des tests]()
-[Se connecter à la BDD depuis VSCode]()
+[Récupération de l'image Docker](#récupération-de-limage-docker)
+[Lancer le conteneur](#lancer-le-conteneur)
+[Extensions VSCode recommandées](#extensions-vscode-recommandées)
+[Récupération du code](#récupération-du-code)
+[Scripts SQL](#scripts-sql)
+[Lancer les scripts de configuration de la BDD](#lancer-les-scripts-de-configuration-de-la-bdd)
+[Lancer des tests](#lancer-des-tests)
+[Se connecter à la BDD depuis VSCode](#se-connecter-à-la-bdd-depuis-vscode)
 
 
 ## Prérequis
 
 ### Récupération de l'image Docker
 Afin de pouvoir lancer notre BDD, vous devez vous munir d'un conteneur oracle, qui simulera la base de données (BDD). \
-Vous pouvez récupérer l'image depuis internet, en exécutant la commande : \
+Vous pouvez récupérer l'image depuis internet, en exécutant la commande :
 ```
 docker pull container-registry.oracle.com/database/free:latest
 ```
@@ -66,7 +66,6 @@ Si vous souhaitez lancer des tests sur votre BDD, vous pouvez vous rendre dans l
 
 
 ## Se connecter à la BDD depuis VSCode
-
 Se connecter en tant qu'administrateur à la BDD :
 * Ouvrir un terminal sur VSCode
 * Cliquer sur la flèche pointant vers le bas à côté de '+'
