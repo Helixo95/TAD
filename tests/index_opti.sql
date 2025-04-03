@@ -18,12 +18,12 @@ DECLARE
     v_email2 VARCHAR2(50) := 'email1000@example.com'; -- Changer l'email si besoin
     v_statut INT := 2; -- Statut "résolu"
     
-    -- Définir le type de table pour collecter plusieurs tickets dans le schéma 'C##ADMIN_SYS_ORIGIN'
-    TYPE ticket_table_type IS TABLE OF C##ADMIN_SYS_ORIGIN.tickets%ROWTYPE;
+    -- Définir le type de table pour collecter plusieurs tickets dans le schéma 'C##ADMIN_SYS_OPTI'
+    TYPE ticket_table_type IS TABLE OF C##ADMIN_SYS_OPTI.tickets%ROWTYPE;
     v_tickets ticket_table_type;
-    
-    v_eleve C##ADMIN_SYS_ORIGIN.eleves%ROWTYPE; -- Variable pour un élève dans le schéma 'C##ADMIN_SYS_ORIGIN'
-    
+
+    v_eleve C##ADMIN_SYS_OPTI.eleves%ROWTYPE; -- Variable pour un élève dans le schéma 'C##ADMIN_SYS_OPTI'
+
     v_count INTEGER := 0; -- Compteur pour les tickets
 BEGIN
     -- Temps de début
@@ -39,13 +39,13 @@ BEGIN
         END IF;
 
         -- Ajout d'un élève avec des tickets et logs
-        INSERT INTO C##ADMIN_SYS_ORIGIN.eleves (eleve_id, nom, prenom, email, password, classe, specialite, filiere, lieu)
+        INSERT INTO C##ADMIN_SYS_OPTI.eleves (eleve_id, nom, prenom, email, password, classe, specialite, filiere, lieu)
         VALUES (90 + i, 'Nom' || i, 'Prénom' || i, 'email' || i || '@example.com', 'pass' || i, 'Classe' || i, 'Spécialité' || i, 'Filière' || i, v_lieu);
 
-        INSERT INTO C##ADMIN_SYS_ORIGIN.tickets (ticket_id, sujet, description, statut, date_ouverture, date_fermeture, eleve_id, assigne_id)
+        INSERT INTO C##ADMIN_SYS_OPTI.tickets (ticket_id, sujet, description, statut, date_ouverture, date_fermeture, eleve_id, assigne_id)
         VALUES (i + 1000, 'Problème ' || i, 'Problème numéro ' || i, 0, CURRENT_TIMESTAMP, NULL, 90 + i, 1);
 
-        INSERT INTO C##ADMIN_SYS_ORIGIN.logs (log_id, action, date_action, eleve_id, ticket_id)
+        INSERT INTO C##ADMIN_SYS_OPTI.logs (log_id, action, date_action, eleve_id, ticket_id)
         VALUES (i + 2000, 'Création du ticket', CURRENT_TIMESTAMP, 90 + i, i + 1000);
 
         -- Afficher l'identifiant généré avec l'ID calculé
@@ -75,7 +75,7 @@ BEGIN
 
     -- SELECT de l'élève par email avec INTO
     BEGIN
-        SELECT * INTO v_eleve FROM C##ADMIN_SYS_ORIGIN.eleves WHERE email = v_email1;
+        SELECT * INTO v_eleve FROM C##ADMIN_SYS_OPTI.eleves WHERE email = v_email1;
         DBMS_OUTPUT.PUT_LINE('Élève trouvé : ID=' || v_eleve.eleve_id || ', Nom=' || v_eleve.nom || ', Prénom=' || v_eleve.prenom);
     EXCEPTION
         WHEN NO_DATA_FOUND THEN
@@ -83,7 +83,7 @@ BEGIN
     END;
 
     BEGIN
-        SELECT * INTO v_eleve FROM C##ADMIN_SYS_ORIGIN.eleves WHERE email = v_email2;
+        SELECT * INTO v_eleve FROM C##ADMIN_SYS_OPTI.eleves WHERE email = v_email2;
         DBMS_OUTPUT.PUT_LINE('Élève trouvé : ID=' || v_eleve.eleve_id || ', Nom=' || v_eleve.nom || ', Prénom=' || v_eleve.prenom);
     EXCEPTION
         WHEN NO_DATA_FOUND THEN
@@ -106,7 +106,7 @@ BEGIN
     -- Récupérer les tickets avec BULK COLLECT
     SELECT * 
     BULK COLLECT INTO v_tickets
-    FROM C##ADMIN_SYS_ORIGIN.tickets
+    FROM C##ADMIN_SYS_OPTI.tickets
     WHERE statut = v_statut;
 
     -- Parcourir les tickets récupérés
