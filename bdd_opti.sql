@@ -271,26 +271,42 @@ CREATE INDEX cl_logiciel_licences_idx ON CLUSTER cl_logiciel_licences;
 
 -- Trigger pour la création automatique de tickets lors de l'insertion d'un
 -- nouvel élève dans la table eleves
+
+CREATE SEQUENCE seq_ticket_id START WITH 5000 INCREMENT BY 1 NOCACHE NOCYCLE;
+CREATE SEQUENCE seq_log_id START WITH 5000 INCREMENT BY 1 NOCACHE NOCYCLE;
+
 CREATE OR REPLACE TRIGGER trg_after_insert_eleves
 AFTER INSERT ON eleves
 FOR EACH ROW
 DECLARE
 BEGIN
   -- Création de trois tickets automatiques
-  INSERT INTO tickets (ticket_id, sujet, description, statut, date_ouverture, eleve_id)
-  VALUES (seq_ticket_id.NEXTVAL, 'Ticket automatique 1', 'Ticket généré automatiquement lors de la création de l''élève', 0, CURRENT_TIMESTAMP, :NEW.eleve_id);
+  BEGIN
+    INSERT INTO tickets (ticket_id, sujet, description, statut, date_ouverture, eleve_id)
+    VALUES (seq_ticket_id.NEXTVAL, 'Ticket automatique 1', 'Ticket généré automatiquement lors de la création de l''élève', 0, CURRENT_TIMESTAMP, :NEW.eleve_id);
 
-  INSERT INTO tickets (ticket_id, sujet, description, statut, date_ouverture, eleve_id)
-  VALUES (seq_ticket_id.NEXTVAL, 'Ticket automatique 2', 'Ticket généré automatiquement lors de la création de l''élève', 0, CURRENT_TIMESTAMP, :NEW.eleve_id);
+    INSERT INTO tickets (ticket_id, sujet, description, statut, date_ouverture, eleve_id)
+    VALUES (seq_ticket_id.NEXTVAL, 'Ticket automatique 2', 'Ticket généré automatiquement lors de la création de l''élève', 0, CURRENT_TIMESTAMP, :NEW.eleve_id);
 
-  INSERT INTO tickets (ticket_id, sujet, description, statut, date_ouverture, eleve_id)
-  VALUES (seq_ticket_id.NEXTVAL, 'Ticket automatique 3', 'Ticket généré automatiquement lors de la création de l''élève', 0, CURRENT_TIMESTAMP, :NEW.eleve_id);
+    INSERT INTO tickets (ticket_id, sujet, description, statut, date_ouverture, eleve_id)
+    VALUES (seq_ticket_id.NEXTVAL, 'Ticket automatique 3', 'Ticket généré automatiquement lors de la création de l''élève', 0, CURRENT_TIMESTAMP, :NEW.eleve_id);
+  EXCEPTION
+    WHEN OTHERS THEN
+      -- En cas d'erreur, afficher un message d'erreur
+      DBMS_OUTPUT.PUT_LINE('Erreur lors de l''insertion des tickets pour l''élève ID : ' || :NEW.eleve_id);
+  END;
 
   -- Enregistrement du log de création de l'élève
-  INSERT INTO logs (log_id, action, date_action, eleve_id, ticket_id)
-  VALUES (seq_log_id.NEXTVAL, 'Création de l''élève', CURRENT_TIMESTAMP, :NEW.eleve_id, NULL);
+  BEGIN
+    INSERT INTO logs (log_id, action, date_action, eleve_id, ticket_id)
+    VALUES (seq_log_id.NEXTVAL, 'Création de l''élève', CURRENT_TIMESTAMP, :NEW.eleve_id, NULL);
+  EXCEPTION
+    WHEN OTHERS THEN
+      -- En cas d'erreur, afficher un message d'erreur
+      DBMS_OUTPUT.PUT_LINE('Erreur lors de l''insertion du log pour l''élève ID : ' || :NEW.eleve_id);
+  END;
 END;
-/
+
 
 
 -- Trigger pour la cloture / résolution du ticket
