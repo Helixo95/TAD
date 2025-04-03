@@ -1,15 +1,15 @@
 # Projet TAD
 
 ## Sommaire
-[Prérequis](#prérequis)
-[Récupération de l'image Docker](#récupération-de-limage-docker)
-[Lancer le conteneur](#lancer-le-conteneur)
-[Extensions VSCode recommandées](#extensions-vscode-recommandées)
-[Récupération du code](#récupération-du-code)
-[Scripts SQL](#scripts-sql)
-[Lancer les scripts de configuration de la BDD](#lancer-les-scripts-de-configuration-de-la-bdd)
-[Lancer des tests](#lancer-des-tests)
-[Se connecter à la BDD depuis VSCode](#se-connecter-à-la-bdd-depuis-vscode)
+[Prérequis](#prérequis)  
+[Récupération de l'image Docker](#récupération-de-limage-docker)  
+[Lancer le conteneur](#lancer-le-conteneur)  
+[Extensions VSCode recommandées](#extensions-vscode-recommandées)  
+[Récupération du code](#récupération-du-code)  
+[Scripts SQL](#scripts-sql)  
+[Lancer les scripts de configuration de la BDD](#lancer-les-scripts-de-configuration-de-la-bdd)  
+[Lancer des tests](#lancer-des-tests)  
+[Se connecter à la BDD depuis VSCode](#se-connecter-à-la-bdd-depuis-vscode)  
 
 
 ## Prérequis
