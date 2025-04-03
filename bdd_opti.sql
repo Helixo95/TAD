@@ -272,6 +272,9 @@ CREATE INDEX cl_logiciel_licences_idx ON CLUSTER cl_logiciel_licences;
 -- Trigger pour la création automatique de tickets lors de l'insertion d'un
 -- nouvel élève dans la table eleves
 
+CREATE SEQUENCE seq_ticket_id START WITH 5000 INCREMENT BY 1 NOCACHE NOCYCLE;
+CREATE SEQUENCE seq_log_id START WITH 5000 INCREMENT BY 1 NOCACHE NOCYCLE;
+
 CREATE OR REPLACE TRIGGER trg_after_insert_eleves
 AFTER INSERT ON eleves
 FOR EACH ROW
@@ -279,17 +282,17 @@ DECLARE
 BEGIN
   -- Création de trois tickets automatiques pour chaque élève
   INSERT INTO tickets (ticket_id, sujet, description, statut, date_ouverture, eleve_id)
-  VALUES (SYS_GUID(), 'Ticket automatique 1', 'Ticket généré automatiquement lors de la création de l''élève', 0, CURRENT_TIMESTAMP, :NEW.eleve_id);
+  VALUES (seq_ticket_id.NEXTVAL, 'Ticket automatique 1', 'Ticket généré automatiquement lors de la création de l''élève', 0, CURRENT_TIMESTAMP, :NEW.eleve_id);
 
   INSERT INTO tickets (ticket_id, sujet, description, statut, date_ouverture, eleve_id)
-  VALUES (SYS_GUID(), 'Ticket automatique 2', 'Ticket généré automatiquement lors de la création de l''élève', 0, CURRENT_TIMESTAMP, :NEW.eleve_id);
+  VALUES (seq_ticket_id.NEXTVAL, 'Ticket automatique 2', 'Ticket généré automatiquement lors de la création de l''élève', 0, CURRENT_TIMESTAMP, :NEW.eleve_id);
 
   INSERT INTO tickets (ticket_id, sujet, description, statut, date_ouverture, eleve_id)
-  VALUES (SYS_GUID(), 'Ticket automatique 3', 'Ticket généré automatiquement lors de la création de l''élève', 0, CURRENT_TIMESTAMP, :NEW.eleve_id);
+  VALUES (seq_ticket_id.NEXTVAL, 'Ticket automatique 3', 'Ticket généré automatiquement lors de la création de l''élève', 0, CURRENT_TIMESTAMP, :NEW.eleve_id);
 
   -- Enregistrement du log de création de l'élève
   INSERT INTO logs (log_id, action, date_action, eleve_id, ticket_id)
-  VALUES (SYS_GUID(), 'Création de l''élève', CURRENT_TIMESTAMP, :NEW.eleve_id, NULL);
+  VALUES (seq_log_id.NEXTVAL, 'Création de l''élève', CURRENT_TIMESTAMP, :NEW.eleve_id, NULL);
 
 EXCEPTION
   WHEN OTHERS THEN
