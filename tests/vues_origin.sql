@@ -1,4 +1,3 @@
--- vues_origin.sql
 -- Tests de performance pour les vues dans la base de données d'origine (sans clusters)
 
 -- Active l'affichage des messages de sortie
@@ -17,11 +16,22 @@ BEGIN
     -- Temps de début
     v_start := SYSTIMESTAMP;
 
-    -- Requête complexe sur la vue v_eleves_tickets (sur bdd_origin)
-    SELECT e.nom, e.prenom, t.ticket_id, t.sujet
-    FROM C##ADMIN_SYS_ORIGIN.v_eleves_tickets e
-    JOIN C##ADMIN_SYS_ORIGIN.tickets t ON e.eleve_id = t.eleve_id
-    WHERE t.statut = 1;
+    -- Requête complexe sur la vue v_eleves_tickets
+    SELECT 
+        t.ticket_id,
+        t.sujet,
+        t.description,
+        t.statut,
+        e.eleve_id,
+        e.nom            AS nom_eleve,
+        e.prenom         AS prenom_eleve,
+        t.assigne_id,
+        a.nom            AS nom_administrateur
+    FROM C##ADMIN_SYS_ORIGIN.tickets t
+    LEFT JOIN C##ADMIN_SYS_ORIGIN.eleves e ON t.eleve_id = e.eleve_id
+    LEFT JOIN C##ADMIN_SYS_ORIGIN.administrateurs a ON t.assigne_id = a.admin_id
+    WHERE t.statut = 1; -- Application du filtre sur le statut
+
 
     -- Temps de fin
     v_end := SYSTIMESTAMP;
@@ -36,12 +46,21 @@ BEGIN
     -- Temps de début
     v_start := SYSTIMESTAMP;
 
-    -- Requête complexe sur la vue v_licences_logiciels_eleves (sur bdd_origin)
-    SELECT l.licence_id, l.date_attribution, s.logiciel_id, e.nom
-    FROM C##ADMIN_SYS_ORIGIN.v_licences_logiciels_eleves l
-    JOIN C##ADMIN_SYS_ORIGIN.logiciels s ON l.logiciel_id = s.logiciel_id
-    JOIN C##ADMIN_SYS_ORIGIN.eleves e ON l.eleve_id = e.eleve_id
+    -- Requête complexe sur la vue v_licences_logiciels_eleves
+    SELECT 
+        l.licence_id,
+        l.cle_licence,
+        l.date_expiration,
+        lg.nom               AS nom_logiciel,
+        e.nom                AS nom_eleve,
+        e.prenom             AS prenom_eleve,
+        s.logiciel_id        AS logiciel_id
+    FROM C##ADMIN_SYS_ORIGIN.licences l
+    LEFT JOIN C##ADMIN_SYS_ORIGIN.logiciels lg ON l.logiciel_id = lg.logiciel_id
+    LEFT JOIN C##ADMIN_SYS_ORIGIN.eleves e ON l.eleve_id = e.eleve_id
+    JOIN lC##ADMIN_SYS_ORIGIN.ogiciels s ON l.logiciel_id = s.logiciel_id
     WHERE e.classe = 'Terminale';
+
 
     -- Temps de fin
     v_end := SYSTIMESTAMP;
@@ -52,15 +71,54 @@ BEGIN
     -- Afficher le temps d'exécution
     DBMS_OUTPUT.PUT_LINE('Temps d exécution pour la vue v_licences_logiciels_eleves sur bdd_origin : ' || v_diff);
 
-    -- Test sur la vue v_ticket_logs (sur bdd_origin)
+    -- Test sur la vue v_analyse_classe_filiere (sur bdd_origin)
     -- Temps de début
     v_start := SYSTIMESTAMP;
 
-    -- Requête complexe sur la vue v_ticket_logs (sur bdd_origin)
-    SELECT t.ticket_id, t.sujet, l.action, l.date_action
-    FROM C##ADMIN_SYS_ORIGIN.v_ticket_logs t
-    JOIN C##ADMIN_SYS_ORIGIN.logs l ON t.ticket_id = l.ticket_id
-    WHERE l.action = 'Création du ticket';
+    -- Requête complexe sur la vue v_analyse_classe_filiere
+    SELECT 
+        ea.classe,
+        ea.filiere,
+        ea.nb_eleves,
+        NVL(tg.nb_tickets, 0) AS nb_tickets,
+        NVL(lg.nb_licences, 0) AS nb_licences,
+        NVL(lcg.nb_logiciels, 0) AS nb_logiciels,
+        NVL(eag.nb_equipements, 0) AS nb_equipements
+    FROM (
+        SELECT classe, filiere, COUNT(*) AS nb_eleves
+        FROM C##ADMIN_SYS_ORIGIN.eleves
+        GROUP BY classe, filiere
+    ) ea
+    LEFT JOIN (
+        SELECT e.classe, e.filiere, COUNT(*) AS nb_tickets
+        FROM C##ADMIN_SYS_ORIGIN.eleves e 
+        JOIN C##ADMIN_SYS_ORIGIN.tickets t ON e.eleve_id = t.eleve_id
+        GROUP BY e.classe, e.filiere
+    ) tg ON ea.classe = tg.classe AND ea.filiere = tg.filiere
+    LEFT JOIN (
+        SELECT e.classe, e.filiere, COUNT(*) AS nb_licences
+        FROM C##ADMIN_SYS_ORIGIN.eleves e 
+        JOIN C##ADMIN_SYS_ORIGIN.licences l ON e.eleve_id = l.eleve_id
+        GROUP BY e.classe, e.filiere
+    ) lg ON ea.classe = lg.classe AND ea.filiere = lg.filiere
+    LEFT JOIN (
+        SELECT e.classe, e.filiere, COUNT(*) AS nb_logiciels
+        FROM C##ADMIN_SYS_ORIGIN.eleves e 
+        JOIN C##ADMIN_SYS_ORIGIN.logiciels lg ON e.eleve_id = lg.eleve_id
+        GROUP BY e.classe, e.filiere
+    ) lcg ON ea.classe = lcg.classe AND ea.filiere = lcg.filiere
+    LEFT JOIN (
+        SELECT e.classe, e.filiere, COUNT(*) AS nb_equipements
+        FROM C##ADMIN_SYS_ORIGIN.eleves e 
+        JOIN C##ADMIN_SYS_ORIGIN.equipements_reseau er ON e.eleve_id = er.eleve_id
+        GROUP BY e.classe, e.filiere
+    ) eag ON ea.classe = eag.classe AND ea.filiere = eag.filiere
+    WHERE ea.nb_eleves > 50  -- Condition sur le nombre d'élèves
+    AND NVL(tg.nb_tickets, 0) > 10  -- Condition sur le nombre de tickets
+    AND NVL(lg.nb_licences, 0) > 5  -- Condition sur le nombre de licences
+    AND NVL(lcg.nb_logiciels, 0) > 3  -- Condition sur le nombre de logiciels
+    AND NVL(eag.nb_equipements, 0) > 0  -- Condition sur le nombre d'équipements
+    ORDER BY ea.classe, ea.filiere;
 
     -- Temps de fin
     v_end := SYSTIMESTAMP;
@@ -69,5 +127,5 @@ BEGIN
     v_diff := v_end - v_start;
 
     -- Afficher le temps d'exécution
-    DBMS_OUTPUT.PUT_LINE('Temps d exécution pour la vue v_ticket_logs sur bdd_origin : ' || v_diff);
+    DBMS_OUTPUT.PUT_LINE('Temps d exécution pour la vue v_analyse_classe_filiere sur bdd_origin : ' || v_diff);
 END;
