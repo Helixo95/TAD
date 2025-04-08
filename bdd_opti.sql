@@ -1,5 +1,5 @@
 -- CREATION DES VUES, CLUSTERS, INDEXS... POUR OPTIMISER LA BDD ORIGINALE
-@{path-to-change}/bdd_origin.sql
+@/Users/aurelienruppe/Documents/Cours/AdminBDD/DB/bdd_origin.sql
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 -- VUES
