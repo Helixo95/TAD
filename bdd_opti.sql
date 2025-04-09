@@ -273,6 +273,8 @@ CREATE INDEX cl_logiciel_licences_idx ON CLUSTER cl_logiciel_licences;
 -- Trigger pour la création automatique de tickets lors de l'insertion d'un
 -- nouvel élève dans la table eleves
 
+DROP SEQUENCE seq_ticket_id;
+DROP SEQUENCE seq_log_id;
 CREATE SEQUENCE seq_ticket_id START WITH 5000 INCREMENT BY 1 NOCACHE NOCYCLE;
 CREATE SEQUENCE seq_log_id START WITH 5000 INCREMENT BY 1 NOCACHE NOCYCLE;
 
@@ -413,6 +415,7 @@ END;
 
 
 -- Création de la séquence pour incrémentation des identifiants de licences
+DROP SEQUENCE seq_licence_id_opti_test;
 CREATE SEQUENCE seq_licence_id_opti_test
     START WITH 91
     INCREMENT BY 1
@@ -440,6 +443,7 @@ END create_licence;
 
 
 -- Création de la séquence pour incrémentation des identifiants d'élèves
+DROP SEQUENCE seq_eleve_id;
 CREATE SEQUENCE seq_eleve_id
     START WITH 91
     INCREMENT BY 1

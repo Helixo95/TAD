@@ -1,7 +1,8 @@
 -- Test de l'insertion directe de licences sur la base de données d'origine
 
 -- Création de la séquence pour incrémentation des identifiants de licences
-CREATE SEQUENCE seq_licence_id_origin_test_3
+DROP SEQUENCE seq_licence_id_origin;
+CREATE SEQUENCE seq_licence_id_origin
     START WITH 100
     INCREMENT BY 1
     NOCACHE
@@ -47,7 +48,7 @@ BEGIN
 
         -- Insertion directe dans la table licences
         INSERT INTO C##ADMIN_SYS_ORIGIN.licences (licence_id, cle_licence, date_expiration, logiciel_id, eleve_id)
-        VALUES (seq_licence_id_origin_test_2.NEXTVAL, v_cle_licence, v_date_expiration, v_logiciel_id, v_eleve_id);
+        VALUES (seq_licence_id_origin.NEXTVAL, v_cle_licence, v_date_expiration, v_logiciel_id, v_eleve_id);
     END LOOP;
 
     -- Temps de fin
