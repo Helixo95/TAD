@@ -149,4 +149,4 @@ CREATE TABLE logs (
 
 ------------------------------------------------------------------------------
 -- Insertions des données dans la BDD
-@/Users/aurelienruppe/Documents/Cours/AdminBDD/DB/insertions.sql
+@{path-to-change}/insertions.sql

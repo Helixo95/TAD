@@ -57,7 +57,7 @@ SELECT name FROM v$database;
 -- a. BDD origine
 -- Importation de la BDD d'origine
 ALTER SESSION SET CURRENT_SCHEMA = c##admin_sys_origin;
-@/Users/aurelienruppe/Documents/Cours/AdminBDD/DB/bdd_origin.sql
+@{path-to-change}/bdd_origin.sql
 
 -- Création de l'utilisateur témoin avec un accès lecture seule sur bdd_origin
 CREATE USER c##witness IDENTIFIED BY "password_witness";
@@ -81,7 +81,7 @@ GRANT c##origin_readOnly TO c##witness;
 -- b. BDD optimisée
 -- Importation de la BDD optimisée
 ALTER SESSION SET CURRENT_SCHEMA = c##admin_sys_opti;
-@/Users/aurelienruppe/Documents/Cours/AdminBDD/DB/bdd_opti.sql
+@{path-to-change}/bdd_opti.sql
 
 -- Création de l'utilisateur Amélioration avec tous les droits sur bdd_opti
 CREATE USER c##improvement IDENTIFIED BY password_improvement;
