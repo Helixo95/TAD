@@ -60,6 +60,21 @@ Dans ce projet, vous trouverez différents scripts SQL :
 Pour lancer les scripts de configuration de la BDD, il vous faut ouvrir `users.sql` dans VSCode. Une fois ce scrit ouvert, cliquez sur "Lancer le script" ou sur la touche "F5". \
 Une fois ce script terminé, votre BDD est utilisable.
 
+Si une séquence vous empêche de lancer correctement les scripts, voici les étapes à suivre :
+* Se connecter à la BDD en suivant les étapes définies [ici](#se-connecter-à-la-bdd-depuis-vscode)
+* Vérifier que la séquence est présente en entrant la commande : 
+```
+SELECT sequence_name
+FROM all_sequences
+WHERE sequence_name = 'NOM_SEQ';
+```
+* Si elle est présente, la supprimer : 
+```
+DROP SEQUENCE nom_seq;
+```
+* Relancer le script.
+* Si cela ne marche pas, changer le nom de la séquence et ses appels.
+
 
 ## Lancer des tests
 Si vous souhaitez lancer des tests sur votre BDD, vous pouvez vous rendre dans le dossier "tests", ouvrir les scripts et les exécuter. Seul le script "test_in_terminal" ne fonctionnera pas : il s'agit de commandes que vous pouvez rentrer directement dans votre terminal (cf [Se connecter à la BDD depuis VSCode](#se-connecter-à-la-bdd-depuis-vscode)).
